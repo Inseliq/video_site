@@ -1,0 +1,48 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/css/layout.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <a asp-controller="Home" asp-action="Index"><img src="~/assets/img/logo.png" alt="Логотип"
+                    class="logo" /></a>
+            <nav class="site-nav">
+                <ul>
+                    <li>@Html.ActionLink("О нас", "About", "Home")</li>
+                    <li>@Html.ActionLink("Избранное", "Favorites", "Directory")</li>
+                    <li>@Html.ActionLink("Каталог", "Catalog", "Directory")</li>
+                    <li>@Html.ActionLink("Войти", "Login", "Account")</li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="site-main">
+        <div class="container">
+            @RenderBody()
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>2025 DealHub ©. Все права защищены.</p>
+            <div class="info">
+                <div class="social-links">
+                    <a href="https://inseliq.github.io/it-cube/" target="_blank" class="vk"></a>
+                    <a href="https://inseliq.github.io/it-cube/" target="_blank" class="site"></a>
+                    <a href="https://inseliq.github.io/it-cube/" target="_blank" class="tg"></a>
+                </div>
+                <address>
+                    <p>Телефон: +7 (987) 654-32-10</p>
+                    <article>Адрес: г. Пенза, ул. Пушкина, д. 137</article>
+                </address>
+            </div>
+        </div>
+    </footer>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
