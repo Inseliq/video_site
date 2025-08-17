@@ -1,0 +1,29 @@
+@model YourApp.Models.ProfileViewModel
+@{
+    ViewData["Title"] = "Профиль";
+}
+<head>
+    <link rel="stylesheet" href="~/css/profile.css">
+</head>
+<div class="profile-card">
+    <div class="profile-avatar">
+        <img src="@Model.AvatarPath" alt="Аватар" class="avatar-lg" />
+    </div>
+
+    <div class="profile-details">
+        <h2>@Model.FullName</h2>
+        <p><strong>Почта:</strong> @Model.Email</p>
+        <p><strong>Телефон:</strong> @(string.IsNullOrEmpty(Model.Phone) ? "-" : Model.Phone)</p>
+        <p><strong>Адрес:</strong> @(string.IsNullOrEmpty(Model.Address) ? "-" : Model.Address)</p>
+
+        <div class="profile-actions">
+            <a asp-action="Edit" class="btn">Редактировать</a>
+            <a asp-controller="Home" asp-action="Index" class="btn secondary">На главную</a>
+        </div>
+
+        @if (TempData["ProfileSaved"] != null)
+        {
+            <p class="saved-msg" style="margin-top:12px;color:green;">@TempData["ProfileSaved"]</p>
+        }
+    </div>
+</div>

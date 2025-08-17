@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Project\\video_site\\video_site.csproj": {}
+    "C:\\Users\\shind\\Documents\\git\\video_site\\video_site.csproj": {}
   },
   "projects": {
-    "E:\\Project\\video_site\\video_site.csproj": {
+    "C:\\Users\\shind\\Documents\\git\\video_site\\video_site.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Project\\video_site\\video_site.csproj",
+        "projectUniqueName": "C:\\Users\\shind\\Documents\\git\\video_site\\video_site.csproj",
         "projectName": "video_site",
-        "projectPath": "E:\\Project\\video_site\\video_site.csproj",
-        "packagesPath": "C:\\Users\\1\\.nuget\\packages\\",
-        "outputPath": "E:\\Project\\video_site\\obj\\",
+        "projectPath": "C:\\Users\\shind\\Documents\\git\\video_site\\video_site.csproj",
+        "packagesPath": "C:\\Users\\shind\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\shind\\Documents\\git\\video_site\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\1\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\shind\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -44,11 +44,25 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.100"
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.8, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "target": "Package",
+              "version": "[9.0.8, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[9.0.8, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -68,7 +82,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

@@ -1,21 +1,55 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    var userId = HttpContextAccessor?.HttpContext?.Session?.GetString("UserId");
+    var userName = HttpContextAccessor?.HttpContext?.Session?.GetString("UserName") ?? "Пользователь";
+    var avatar = HttpContextAccessor?.HttpContext?.Session?.GetString("UserAvatar") ?? Url.Content("~/assets/img/default-avatar.png");
+}
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="~/css/layout.css">
+    <title>@ViewData["Title"] - DealHub</title>
 </head>
 <body>
     <header class="site-header">
-        <div class="container">
-            <a asp-controller="Home" asp-action="Index"><img src="~/assets/img/logo.png" alt="Логотип"
-                    class="logo" /></a>
+        <div class="container header-inner">
+            <a asp-controller="Home" asp-action="Index" class="logo__link">
+                <img src="~/assets/img/logo.png" alt="Логотип" class="logo" />
+            </a>
+
             <nav class="site-nav">
-                <ul>
+                <ul class="nav-list">
                     <li>@Html.ActionLink("О нас", "About", "Home")</li>
                     <li>@Html.ActionLink("Избранное", "Favorites", "Directory")</li>
                     <li>@Html.ActionLink("Каталог", "Catalog", "Directory")</li>
-                    <li>@Html.ActionLink("Войти", "Login", "Account")</li>
+
+                    @if (!string.IsNullOrEmpty(userId))
+                    {
+                        <li class="profile-dropdown" id="profileDropdown">
+                            <button class="profile-toggle" type="button" aria-haspopup="true" aria-expanded="false">
+                                <img src="@avatar" alt="Аватар" class="avatar-sm" />
+                                <span class="username">@userName</span>
+                                <span class="chev">▾</span>
+                            </button>
+
+                            <ul class="dropdown-menu" role="menu" aria-label="Профиль меню">
+                                <li><a asp-controller="Profile" asp-action="Index">Профиль</a></li>
+                                <li>
+                                    <form asp-controller="Account" asp-action="Logout" method="post" class="logout-form">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn-link">Выйти</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    }
+                    else
+                    {
+                        <li>@Html.ActionLink("Войти", "Sign", "Account")</li>
+                    }
                 </ul>
             </nav>
         </div>
@@ -28,13 +62,13 @@
     </main>
 
     <footer class="site-footer">
-        <div class="container">
+        <div class="container footer-inner">
             <p>2025 DealHub ©. Все права защищены.</p>
             <div class="info">
                 <div class="social-links">
-                    <a href="https://inseliq.github.io/it-cube/" target="_blank" class="vk"></a>
-                    <a href="https://inseliq.github.io/it-cube/" target="_blank" class="site"></a>
-                    <a href="https://inseliq.github.io/it-cube/" target="_blank" class="tg"></a>
+                    <a href="https://inseliq.github.io/it-cube/" target="_blank" class="vk" aria-label="VK"></a>
+                    <a href="https://inseliq.github.io/it-cube/" target="_blank" class="site" aria-label="Сайт"></a>
+                    <a href="https://inseliq.github.io/it-cube/" target="_blank" class="tg" aria-label="Telegram"></a>
                 </div>
                 <address>
                     <p>Телефон: +7 (987) 654-32-10</p>
@@ -43,6 +77,40 @@
             </div>
         </div>
     </footer>
+
     @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        (function () {
+            const toggle = document.querySelector('.profile-toggle');
+            const dropdown = document.getElementById('profileDropdown');
+
+            if (!toggle || !dropdown) return;
+
+            toggle.addEventListener('click', function (e) {
+                e.stopPropagation();
+                dropdown.classList.toggle('open');
+                const expanded = dropdown.classList.contains('open');
+                toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+            });
+
+            // close if clicked outside
+            document.addEventListener('click', function (e) {
+                if (!dropdown.contains(e.target)) {
+                    dropdown.classList.remove('open');
+                    toggle.setAttribute('aria-expanded', 'false');
+                }
+            });
+
+            // close on escape
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    dropdown.classList.remove('open');
+                    toggle.setAttribute('aria-expanded', 'false');
+                }
+            });
+        })();
+    </script>
+
 </body>
 </html>

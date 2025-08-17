@@ -1,0 +1,61 @@
+@model YourApp.Models.ProfileViewModel
+@{
+    ViewData["Title"] = "Редактировать профиль";
+}
+<head>
+    <link rel="stylesheet" href="~/css/profile.css">
+</head>
+<h1>Редактировать профиль</h1>
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data" novalidate>
+    @Html.AntiForgeryToken()
+
+    <div class="form-row">
+        <div class="form-field">
+            <label asp-for="FullName">Имя</label>
+            <input asp-for="FullName" />
+            <span asp-validation-for="FullName" class="text-danger"></span>
+        </div>
+        <div class="form-field">
+            <label asp-for="Email">Email</label>
+            <input asp-for="Email" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-field">
+            <label asp-for="Phone">Телефон</label>
+            <input asp-for="Phone" />
+            <span asp-validation-for="Phone" class="text-danger"></span>
+            <small class="field-hint">Формат: +7 (999) 999-99-99</small>
+        </div>
+        <div class="form-field">
+            <label asp-for="Address">Адрес</label>
+            <input asp-for="Address" />
+            <span asp-validation-for="Address" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-field">
+            <label>Текущий аватар</label>
+            <img src="@Model.AvatarPath" alt="avatar" style="width:100px;height:100px;border-radius:8px;object-fit:cover;" />
+        </div>
+        <div class="form-field">
+            <label asp-for="AvatarFile">Загрузить новый аватар</label>
+            <input asp-for="AvatarFile" type="file" accept="image/*" />
+            <span asp-validation-for="AvatarFile" class="text-danger"></span>
+            <small class="field-hint">Макс. размер файла зависит от конфигурации сервера.</small>
+        </div>
+    </div>
+
+    <div style="margin-top:12px;">
+        <button type="submit" class="btn">Сохранить</button>
+        <a asp-action="Index" class="btn secondary">Отмена</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

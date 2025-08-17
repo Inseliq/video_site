@@ -1,5 +1,84 @@
-﻿
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+﻿<head>
+<link rel="stylesheet" href="~/css/index.css">
+<script src="~/js/style/index.js" defer></script>
+@{
+    ViewData["Title"] = "Главная страница";
+}
+</head>
+
+<div class="bg-animation"></div>
+
+    <div class="floating-elements">
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+    </div>
+
+    <!-- Hero секция -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Deal Hub</h1>
+            <p>Революционный маркетплейс нового поколения. Здесь встречаются лучшие предложения, инновационные решения и безграничные возможности для вашего бизнеса.</p>
+            <a href="#" class="cta-button" onclick="animateClick(this)">Начать прямо сейчас</a>
+        </div>
+    </section>
+
+    <!-- Секция возможностей -->
+    <section class="features">
+        <div class="container">
+            <h2>Почему выбирают Deal Hub?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <h3>Быстрые сделки</h3>
+                    <p>Автоматизированные процессы и умные алгоритмы обеспечивают молниеносное заключение сделок и мгновенные платежи.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>Максимальная безопасность</h3>
+                    <p>Многоуровневая система защиты, блокчейн-технологии и страхование каждой транзакции гарантируют полную безопасность.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3>Аналитика и рост</h3>
+                    <p>Продвинутая аналитика, персональные рекомендации и инструменты для масштабирования вашего бизнеса.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Секция статистики -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number" data-count="50000">0</span>
+                    <div class="stat-label">Активных продавцов</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-count="1500000">0</span>
+                    <div class="stat-label">Довольных покупателей</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-count="99">0</span>
+                    <div class="stat-label">% успешных сделок</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-count="24">0</span>
+                    <div class="stat-label">Часа поддержки</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA секция -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Готовы присоединиться к будущему торговли?</h2>
+            <p>Откройте новые горизонты для вашего бизнеса уже сегодня</p>
+            <div class="cta-buttons">
+                <a href="#" class="cta-button" onclick="animateClick(this)">Создать магазин</a>
+                <a href="#" class="btn-secondary">Узнать больше</a>
+            </div>
+        </div>
+    </section>
