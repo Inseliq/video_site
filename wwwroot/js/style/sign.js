@@ -24,7 +24,7 @@ async function submitForm(e, mode) {
     const form = mode === 'login' ? document.getElementById('loginForm') : document.getElementById('registerForm');
     if (!form) return;
 
-    // простая валидация на клиенте (можно расширить)
+    // простая валидация на клиенте
     const inputs = form.querySelectorAll('input[required]');
     for (let input of inputs) {
         if (!input.value) {

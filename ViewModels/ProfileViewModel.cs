@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
-namespace YourApp.Models
+namespace video_site.Models
 {
     public class ProfileViewModel
     {

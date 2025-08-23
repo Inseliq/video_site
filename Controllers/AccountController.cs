@@ -7,75 +7,101 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using video_site.Models;
 using video_site.Controllers.ViewModels;
-using video_site.Controllers.Data;
+using video_site.Data;
 
 namespace video_site.Controllers
 {
     public class AccountController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly IPasswordHasher<ApplicationUser> _passwordHasher;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public AccountController(ApplicationDbContext context, IPasswordHasher<ApplicationUser> passwordHasher)
+        public AccountController(
+            ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager)
         {
             _context = context;
-            _passwordHasher = passwordHasher;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         // GET: /Account/Sign
         [HttpGet]
         public IActionResult Sign()
         {
-            // возвращаем страницу, где обе формы — login и register
-            return View();
+            // Возвращаем обёртку SignViewModel с пустыми вложенными моделями
+            return View(new SignViewModel());
         }
 
-        // POST: /Account/Sign - теперь метод называется SignPost, но внешне имеет ActionName "Sign"
+        // POST: /Account/Sign
         [HttpPost]
         [ActionName("Sign")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SignPost()
+        public async Task<IActionResult> SignPost([FromForm] SignViewModel vm)
         {
+            // mode приходит из скрытого поля формы: "login" или "register"
             var mode = (Request.Form["mode"].FirstOrDefault() ?? "").ToLowerInvariant();
 
             if (mode == "register")
             {
+                // --- Собираем RegisterViewModel вручную (поддержка вариантов имён полей) ---
                 var register = new RegisterViewModel
                 {
-                    FullName = Request.Form["FullName"],
-                    Email = Request.Form["Email"],
-                    Password = Request.Form["Password"],
-                    ConfirmPassword = Request.Form["ConfirmPassword"]
+                    FullName = Request.Form["Register.FullName"].FirstOrDefault() ?? Request.Form["FullName"].FirstOrDefault(),
+                    Email = Request.Form["Register.Email"].FirstOrDefault() ?? Request.Form["Email"].FirstOrDefault(),
+                    Password = Request.Form["Register.Password"].FirstOrDefault() ?? Request.Form["Password"].FirstOrDefault(),
+                    ConfirmPassword = Request.Form["Register.ConfirmPassword"].FirstOrDefault() ?? Request.Form["ConfirmPassword"].FirstOrDefault()
                 };
 
-                TryValidateModel(register);
+                // --- Удаляем ключи ModelState, относящиеся к Login, чтобы они не мешали ---
+                var loginKeys = ModelState.Keys.Where(k => k.StartsWith("Login.", StringComparison.OrdinalIgnoreCase)).ToList();
+                foreach (var key in loginKeys) ModelState.Remove(key);
+
+                // --- Валидируем только Register (с префиксом "Register") ---
+                TryValidateModel(register, "Register");
                 if (!ModelState.IsValid)
                 {
                     if (Request.IsAjaxRequest()) return Json(new { success = false, errors = ModelStateErrors() });
-                    return View(register);
+                    return View(vm);
                 }
 
-                var exists = await _context.Users.AnyAsync(u => u.Email == register.Email);
-                if (exists)
+                // проверяем существование пользователя по email (используем register.Email)
+                var existing = await _userManager.FindByEmailAsync(register.Email);
+                if (existing != null)
                 {
-                    ModelState.AddModelError(nameof(register.Email), "Email уже используется.");
+                    ModelState.AddModelError("Register.Email", "Email уже используется.");
                     if (Request.IsAjaxRequest()) return Json(new { success = false, message = "Email уже используется." });
-                    return View(register);
+                    return View(vm);
                 }
 
                 var user = new ApplicationUser
                 {
                     FullName = register.FullName,
-                    Email = register.Email
+                    Email = register.Email,
+                    UserName = register.Email
                 };
-                user.PasswordHash = _passwordHasher.HashPassword(user, register.Password);
 
-                _context.Users.Add(user);
-                await _context.SaveChangesAsync();
+                var createResult = await _userManager.CreateAsync(user, register.Password);
+                if (!createResult.Succeeded)
+                {
+                    // Пробрасываем ошибки в ModelState с префиксами, чтобы отображались корректно в форме Register
+                    foreach (var err in createResult.Errors)
+                    {
+                        var key = "Register";
+                        if (err.Code?.ToLowerInvariant().Contains("password") == true)
+                            key = "Register.Password";
+                        ModelState.AddModelError(key, err.Description);
+                    }
+                    if (Request.IsAjaxRequest()) return Json(new { success = false, errors = ModelStateErrors() });
+                    return View(vm);
+                }
 
-                // Авто-вход
+                await _signInManager.SignInAsync(user, isPersistent: false);
+
                 HttpContext.Session.SetString("UserId", user.Id.ToString());
-                HttpContext.Session.SetString("UserName", user.FullName);
+                HttpContext.Session.SetString("UserName", user.FullName ?? user.Email);
 
                 if (Request.IsAjaxRequest())
                     return Json(new { success = true, redirectUrl = Url.Action("Index", "Home") });
@@ -84,40 +110,47 @@ namespace video_site.Controllers
             }
             else // login
             {
+                // --- Собираем LoginViewModel вручную ---
                 var login = new LoginViewModel
                 {
-                    Email = Request.Form["Email"],
-                    Password = Request.Form["Password"]
+                    Email = Request.Form["Login.Email"].FirstOrDefault() ?? Request.Form["Email"].FirstOrDefault(),
+                    Password = Request.Form["Login.Password"].FirstOrDefault() ?? Request.Form["Password"].FirstOrDefault()
                 };
 
-                TryValidateModel(login);
+                // --- Удаляем ключи ModelState, относящиеся к Register, чтобы они не мешали ---
+                var registerKeys = ModelState.Keys.Where(k => k.StartsWith("Register.", StringComparison.OrdinalIgnoreCase)).ToList();
+                foreach (var key in registerKeys) ModelState.Remove(key);
+
+                // --- Валидируем только Login с префиксом "Login" ---
+                TryValidateModel(login, "Login");
                 if (!ModelState.IsValid)
                 {
                     if (Request.IsAjaxRequest()) return Json(new { success = false, errors = ModelStateErrors() });
-                    return View(login);
+                    return View(vm);
                 }
 
-                var user = await _context.Users
-                    .Where(u => u.Email == login.Email)
-                    .FirstOrDefaultAsync();
-
+                var user = await _userManager.FindByEmailAsync(login.Email);
                 if (user == null)
                 {
                     ModelState.AddModelError(string.Empty, "Неверный логин или пароль.");
                     if (Request.IsAjaxRequest()) return Json(new { success = false, message = "Неверный логин или пароль." });
-                    return View(login);
+                    return View(vm);
                 }
 
-                var verify = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, login.Password);
-                if (verify == PasswordVerificationResult.Failed)
+                // проверяем пароль через SignInManager (учтёт блокировки и т.д.)
+                var signInResult = await _signInManager.CheckPasswordSignInAsync(user, login.Password, lockoutOnFailure: false);
+                if (!signInResult.Succeeded)
                 {
                     ModelState.AddModelError(string.Empty, "Неверный логин или пароль.");
                     if (Request.IsAjaxRequest()) return Json(new { success = false, message = "Неверный логин или пароль." });
-                    return View(login);
+                    return View(vm);
                 }
 
+                // При необходимости: установить cookie Identity
+                await _signInManager.SignInAsync(user, isPersistent: false);
+
                 HttpContext.Session.SetString("UserId", user.Id.ToString());
-                HttpContext.Session.SetString("UserName", user.FullName);
+                HttpContext.Session.SetString("UserName", user.FullName ?? user.Email);
 
                 if (Request.IsAjaxRequest())
                     return Json(new { success = true, redirectUrl = Url.Action("Index", "Home") });
@@ -129,8 +162,12 @@ namespace video_site.Controllers
         // POST: /Account/Logout
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
+            // sign out Identity cookie (если был)
+            await _signInManager.SignOutAsync();
+
+            // clear session as before
             HttpContext.Session.Clear();
             return RedirectToAction("Index", "Home");
         }

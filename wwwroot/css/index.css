@@ -137,6 +137,10 @@ body {
     margin: 0 auto;
 }
 
+.container > section {
+    width: 100vw;
+}
+
 .features h2 {
     text-align: center;
     font-size: 3rem;

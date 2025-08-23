@@ -1,10 +1,10 @@
-@model video_site.Controllers.ViewModels.LoginViewModel
+@model video_site.Controllers.ViewModels.SignViewModel
 @{
     ViewData["Title"] = "Вход";
 }
 
 <head>
-    <link rel="stylesheet" href="~/css/sign.css">
+    <link rel="stylesheet" href="~/css/sign.css" />
     <script src="~/js/style/sign.js" defer></script>
     <title>Вход</title>
 </head>
@@ -33,69 +33,66 @@
             </div>
 
             <!-- Форма входа -->
-<!-- Форма входа -->
-<form asp-controller="Account" asp-action="Sign" method="post" class="auth-form login-form" id="loginForm">
-    @Html.AntiForgeryToken()
-    <input type="hidden" name="mode" id="modeLogin" value="login" />
+            <form asp-controller="Account" asp-action="Sign" method="post" class="auth-form login-form" id="loginForm">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="mode" id="modeLogin" value="login" />
 
-    <!-- общий вывод ошибок -->
-    <div asp-validation-summary="All" class="validation-summary"></div>
+                <!-- общий вывод ошибок -->
+                <div asp-validation-summary="All" class="validation-summary"></div>
 
-    <div class="form-group">
-        <input type="email" name="Email" id="loginEmail" class="form-input" placeholder="Email адрес" required>
-        <span asp-validation-for="Email" class="field-error"></span>
-    </div>
-    <div class="form-group">
-        <input type="password" name="Password" id="loginPassword" class="form-input" placeholder="Пароль" required>
-    </div>
+                <div class="form-group">
+                    <input asp-for="Login.Email" class="form-input" placeholder="Email адрес" />
+                    <span asp-validation-for="Login.Email" class="field-error"></span>
+                </div>
+                <div class="form-group">
+                    <input asp-for="Login.Password" class="form-input" placeholder="Пароль" />
+                    <span asp-validation-for="Login.Password" class="field-error"></span>
+                </div>
 
-    <button type="submit" class="submit-btn" onclick="submitForm(event, 'login')">
-        <span class="loading-spinner"></span>
-        Войти
-    </button>
+                <button type="submit" class="submit-btn" onclick="submitForm(event, 'login')">
+                    <span class="loading-spinner"></span>
+                    Войти
+                </button>
+            </form>
 
-    <div class="auth-options">
-        <a href="#" class="forgot-password">Забыли пароль?</a>
-    </div>
-</form>
+            <!-- Форма регистрации -->
+            <form asp-controller="Account" asp-action="Sign" method="post" class="auth-form register-form" id="registerForm">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="mode" id="modeRegister" value="register" />
 
+                <!-- общий вывод ошибок -->
+                <div asp-validation-summary="All" class="validation-summary"></div>
 
-<!-- Форма регистрации -->
-<form asp-controller="Account" asp-action="Sign" method="post" class="auth-form register-form" id="registerForm">
-    @Html.AntiForgeryToken()
-    <input type="hidden" name="mode" id="modeRegister" value="register" />
+                <div class="form-group">
+                    <input asp-for="Register.FullName" class="form-input" placeholder="Полное имя" />
+                    <span asp-validation-for="Register.FullName" class="field-error"></span>
+                </div>
+                <div class="form-group">
+                    <input asp-for="Register.Email" class="form-input" placeholder="Email адрес" />
+                    <span asp-validation-for="Register.Email" class="field-error"></span>
+                </div>
+                <div class="form-group">
+                    <input asp-for="Register.Password" class="form-input" placeholder="Пароль" />
+                    <span asp-validation-for="Register.Password" class="field-error"></span>
+                </div>
+                <div class="form-group">
+                    <input asp-for="Register.ConfirmPassword" class="form-input" placeholder="Подтвердите пароль" />
+                    <span asp-validation-for="Register.ConfirmPassword" class="field-error"></span>
+                </div>
 
-    <!-- общий вывод ошибок -->
-    <div asp-validation-summary="All" class="validation-summary"></div>
+                <div class="checkbox-group">
+                    <label class="custom-checkbox">
+                        <input type="checkbox" name="Agree" required />
+                        <span class="checkmark"></span>
+                    </label>
+                    <span>Я согласен с <a href="#" style="color: #feca57">условиями использования</a></span>
+                </div>
 
-    <div class="form-group">
-        <input type="text" name="FullName" id="registerFullName" class="form-input" placeholder="Полное имя" required>
-    </div>
-    <div class="form-group">
-        <input type="email" name="Email" id="registerEmail" class="form-input" placeholder="Email адрес" required>
-        <span asp-validation-for="Email" class="field-error"></span>
-    </div>
-    <div class="form-group">
-        <input type="password" name="Password" id="registerPassword" class="form-input" placeholder="Пароль" required>
-    </div>
-    <div class="form-group">
-        <input type="password" name="ConfirmPassword" id="registerConfirmPassword" class="form-input" placeholder="Подтвердите пароль" required>
-    </div>
-
-    <div class="checkbox-group">
-        <label class="custom-checkbox">
-            <input type="checkbox" name="Agree" required>
-            <span class="checkmark"></span>
-        </label>
-        <span>Я согласен с <a href="#" style="color: #feca57;">условиями использования</a></span>
-    </div>
-
-    <button type="submit" class="submit-btn" onclick="submitForm(event, 'register')">
-        <span class="loading-spinner"></span>
-        Создать аккаунт
-    </button>
-</form>
-
+                <button type="submit" class="submit-btn" onclick="submitForm(event, 'register')">
+                    <span class="loading-spinner"></span>
+                    Создать аккаунт
+                </button>
+            </form>
         </div>
     </div>
 </body>

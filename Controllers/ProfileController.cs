@@ -1,64 +1,89 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.IO;
+using System.Security.Claims;
 using System.Threading.Tasks;
-using video_site.Extensions;
+using video_site.Data;
 using video_site.Models;
-using YourApp.Models;
 
-namespace YourApp.Controllers
+namespace video_site.Controllers
 {
     public class ProfileController : Controller
     {
         private readonly IWebHostEnvironment _env;
-        private readonly IHttpContextAccessor _hca;
-        private const string SessionKeyProfile = "UserProfile";
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public ProfileController(IWebHostEnvironment env, IHttpContextAccessor hca)
+        public ProfileController(
+            IWebHostEnvironment env,
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager)
         {
             _env = env;
-            _hca = hca;
+            _userManager = userManager;
+            _signInManager = signInManager;
+        }
+
+        private async Task<ApplicationUser> GetCurrentUserAsync()
+        {
+            if (User?.Identity?.IsAuthenticated == true)
+            {
+                var byPrincipal = await _userManager.GetUserAsync(User);
+                if (byPrincipal != null) return byPrincipal;
+
+                // на всякий случай: попробовать взять Claim NameIdentifier или "sub"
+                var claimId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                              ?? User.FindFirst("sub")?.Value
+                              ?? User.Identity.Name;
+                if (!string.IsNullOrEmpty(claimId))
+                {
+                    var byClaim = await _userManager.FindByIdAsync(claimId);
+                    if (byClaim != null) return byClaim;
+                }
+            }
+
+            return null;
         }
 
         // GET: /Profile
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var session = HttpContext.Session;
-            var profile = session.GetObject<ProfileViewModel>(SessionKeyProfile);
+            var user = await GetCurrentUserAsync();
+            if (user == null) return RedirectToAction("Sign", "Account");
 
-            if (profile == null)
+            var profile = new ProfileViewModel
             {
-                // если профиля нет — создаём заглушку (реально — запрос к БД)
-                profile = new ProfileViewModel
-                {
-                    Id = HttpContext.Session.GetString("UserId") ?? Guid.NewGuid().ToString(),
-                    FullName = HttpContext.Session.GetString("UserName") ?? "Новый пользователь",
-                    Email = HttpContext.Session.GetString("UserEmail") ?? "user@example.com",
-                    Phone = HttpContext.Session.GetString("UserPhone") ?? "",
-                    Address = HttpContext.Session.GetString("UserAddress") ?? "",
-                    AvatarPath = Url.Content("~/assets/img/default-avatar.png")
-                };
-                session.SetObject(SessionKeyProfile, profile);
-            }
+                Id = user.Id.ToString(),
+                FullName = user.FullName,
+                Email = user.Email,
+                Phone = user.Phone,
+                Address = user.Address,
+                AvatarPath = user.AvatarPath
+            };
 
             return View(profile);
         }
 
         // GET: /Profile/Edit
-        public IActionResult Edit()
+        public async Task<IActionResult> Edit()
         {
-            var session = HttpContext.Session;
-            var profile = session.GetObject<ProfileViewModel>(SessionKeyProfile) ?? new ProfileViewModel
+            var user = await GetCurrentUserAsync();
+            if (user == null) return RedirectToAction("Sign", "Account");
+
+            var model = new ProfileViewModel
             {
-                Id = HttpContext.Session.GetString("UserId") ?? Guid.NewGuid().ToString(),
-                FullName = HttpContext.Session.GetString("UserName") ?? "Новый пользователь",
-                Email = HttpContext.Session.GetString("UserEmail") ?? "user@example.com",
-                AvatarPath = Url.Content("~/assets/img/default-avatar.png")
+                Id = user.Id.ToString(),
+                FullName = user.FullName,
+                Email = user.Email,
+                Phone = user.Phone,
+                Address = user.Address,
+                AvatarPath = user.AvatarPath
             };
 
-            return View(profile);
+            return View(model);
         }
 
         // POST: /Profile/Edit
@@ -66,13 +91,37 @@ namespace YourApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ProfileViewModel model)
         {
-            if (!ModelState.IsValid)
-                return View(model);
+
+            // Получаем пользователя: сначала по Id из модели, иначе - по текущему User
+            ApplicationUser user = null;
+            if (!string.IsNullOrEmpty(model.Id))
+                user = await _userManager.FindByIdAsync(model.Id);
+
+            if (user == null)
+                user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+                return RedirectToAction("Sign", "Account"); // или return Unauthorized();
+
+            // Если email поменялся — проверьте уникальность
+            var newEmail = model.Email?.Trim();
+            if (!string.Equals(user.Email ?? string.Empty, newEmail ?? string.Empty, StringComparison.OrdinalIgnoreCase))
+            {
+                var existing = await _userManager.FindByEmailAsync(newEmail ?? "");
+                if (existing != null && existing.Id != user.Id)
+                {
+                    ModelState.AddModelError(nameof(model.Email), "Email уже используется.");
+                    return View(model);
+                }
+
+                user.Email = newEmail;
+                user.UserName = newEmail; // если в вашем проекте UserName = Email
+            }
 
             // Обработка аватара
             if (model.AvatarFile != null && model.AvatarFile.Length > 0)
             {
-                var uploads = Path.Combine(_env.WebRootPath, "uploads");
+                var uploads = Path.Combine(_env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"), "uploads");
                 if (!Directory.Exists(uploads))
                     Directory.CreateDirectory(uploads);
 
@@ -85,20 +134,36 @@ namespace YourApp.Controllers
                     await model.AvatarFile.CopyToAsync(stream);
                 }
 
-                model.AvatarPath = $"/uploads/{fileName}";
+                // Опционально: удалить старый аватарный файл (если нужно)
+                // if (!string.IsNullOrEmpty(user.AvatarPath)) { delete old file... }
 
-                // Сохраняем путь аватара также в сессию для показа в layout
-                HttpContext.Session.SetString("UserAvatar", model.AvatarPath);
+                user.AvatarPath = $"/uploads/{fileName}";
             }
 
-            // Сохраняем профиль в сессии (подмените на БД)
-            HttpContext.Session.SetObject(SessionKeyProfile, model);
+            // Обновляем остальные поля
+            user.FullName = model.FullName;
+            user.Phone = model.Phone;
+            user.Address = model.Address;
 
-            // (Опционально) сохраняем некоторые поля в сессии
-            HttpContext.Session.SetString("UserName", model.FullName ?? "");
-            HttpContext.Session.SetString("UserEmail", model.Email ?? "");
-            HttpContext.Session.SetString("UserPhone", model.Phone ?? "");
-            HttpContext.Session.SetString("UserAddress", model.Address ?? "");
+            // Сохраняем через UserManager
+            var updateResult = await _userManager.UpdateAsync(user);
+
+            // --- Диагностика: если неудача — покажем ошибки и НЕ редиректим ---
+            if (!updateResult.Succeeded)
+            {
+                foreach (var err in updateResult.Errors)
+                    ModelState.AddModelError(string.Empty, err.Description);
+
+                // логирование можно добавить здесь (ILogger), но для простоты просто вернём view с ошибками
+                return View(model);
+            }
+
+            // Обновляем авторизационные cookie/claims (если нужно)
+            await _signInManager.RefreshSignInAsync(user);
+
+            // Обновляем сессию (как у вас ранее)
+            HttpContext.Session.SetString("UserId", user.Id.ToString());
+            HttpContext.Session.SetString("UserName", user.FullName ?? user.Email);
 
             TempData["ProfileSaved"] = "Данные профиля успешно сохранены.";
             return RedirectToAction("Index");

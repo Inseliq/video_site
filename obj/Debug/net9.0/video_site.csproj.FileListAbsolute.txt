@@ -282,9 +282,7 @@ C:\Users\shind\Documents\git\video_site\obj\Debug\net9.0\refint\video_site.dll
 C:\Users\shind\Documents\git\video_site\obj\Debug\net9.0\video_site.pdb
 C:\Users\shind\Documents\git\video_site\obj\Debug\net9.0\video_site.genruntimeconfig.cache
 C:\Users\shind\Documents\git\video_site\obj\Debug\net9.0\ref\video_site.dll
-C:\Users\shind\Documents\git\video_site\obj\Debug\net9.0\compressed\z2t3jecch5-zag9nduhjq.gz
 C:\Users\shind\Documents\git\video_site\obj\Debug\net9.0\compressed\xgqlkgu0la-ih6rmf4nlt.gz
-C:\Users\shind\Documents\git\video_site\obj\Debug\net9.0\compressed\03hxcw2xfr-0vwqn3lkii.gz
 C:\Users\shind\Documents\git\video_site\obj\Debug\net9.0\video_site.csproj.AssemblyReference.cache
 C:\Users\shind\Documents\git\video_site\bin\Debug\net9.0\Azure.Core.dll
 C:\Users\shind\Documents\git\video_site\bin\Debug\net9.0\Azure.Identity.dll
@@ -419,6 +417,15 @@ C:\Users\shind\Documents\git\video_site\bin\Debug\net9.0\ru\Microsoft.CodeAnalys
 C:\Users\shind\Documents\git\video_site\bin\Debug\net9.0\tr\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 C:\Users\shind\Documents\git\video_site\bin\Debug\net9.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 C:\Users\shind\Documents\git\video_site\bin\Debug\net9.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
-C:\Users\shind\Documents\git\video_site\obj\Debug\net9.0\compressed\i7zttd8fqu-0g79uayzxs.gz
 C:\Users\shind\Documents\git\video_site\obj\Debug\net9.0\compressed\t2rbgdkksp-m6hyia5j2h.gz
-C:\Users\shind\Documents\git\video_site\obj\Debug\net9.0\compressed\3u9vvokhj7-wetm8jd7me.gz
+C:\Users\shind\Documents\git\video_site\obj\Debug\net9.0\compressed\3u9vvokhj7-mvrdib38i6.gz
+C:\Users\shind\Documents\git\video_site\obj\Debug\net9.0\compressed\03hxcw2xfr-c5gtj4jk4j.gz
+C:\Users\shind\Documents\git\video_site\obj\Debug\net9.0\compressed\z2t3jecch5-qqz1oa2dex.gz
+C:\Users\shind\Documents\git\video_site\obj\Debug\net9.0\compressed\i7zttd8fqu-dq48ygoplf.gz
+C:\Users\shind\Documents\git\video_site\obj\Debug\net9.0\compressed\rnckac4bk7-rvllgw1t6q.gz
+C:\Users\shind\Documents\git\video_site\obj\Debug\net9.0\compressed\mzc6ip2x51-n1roc5vks1.gz
+C:\Users\shind\Documents\git\video_site\bin\Debug\net9.0\Microsoft.AspNetCore.Cryptography.Internal.dll
+C:\Users\shind\Documents\git\video_site\bin\Debug\net9.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+C:\Users\shind\Documents\git\video_site\bin\Debug\net9.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+C:\Users\shind\Documents\git\video_site\bin\Debug\net9.0\Microsoft.Extensions.Identity.Core.dll
+C:\Users\shind\Documents\git\video_site\bin\Debug\net9.0\Microsoft.Extensions.Identity.Stores.dll
