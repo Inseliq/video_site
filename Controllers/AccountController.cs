@@ -126,7 +126,7 @@ namespace video_site.Controllers
                     return View(vm);
                 }
 
-                var user = await _userManager.FindByEmailAsync(login.Email);
+                var user = await _userManager.FindByNameAsync(login.Email);
                 if (user == null)
                 {
                     ModelState.AddModelError(string.Empty, "Неверный логин или пароль.");
@@ -138,12 +138,12 @@ namespace video_site.Controllers
                 var signInResult = await _signInManager.CheckPasswordSignInAsync(user, login.Password, lockoutOnFailure: false);
                 if (!signInResult.Succeeded)
                 {
+                    System.Console.WriteLine("Failed login attempt for user: " + login.Email);
                     ModelState.AddModelError(string.Empty, "Неверный логин или пароль.");
                     if (Request.IsAjaxRequest()) return Json(new { success = false, message = "Неверный логин или пароль." });
                     return View(vm);
                 }
 
-                // При необходимости: установить cookie Identity
                 await _signInManager.SignInAsync(user, isPersistent: false);
 
                 HttpContext.Session.SetString("UserId", user.Id.ToString());

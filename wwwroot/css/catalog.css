@@ -710,3 +710,254 @@ body {
         border-radius: 10px;
     }
 }
+
+.wishlist-btn {
+    font-size: 18px;
+    color: inherit;
+    transition:
+        transform 0.2s,
+        color 0.3s;
+}
+
+.wishlist-btn-active {
+    color: #ff4d4d; /* Красное сердце */
+}
+
+/* Добавьте эти правила в ваш catalog.css */
+
+button.wishlist-toggle,
+form[action*="Wishlist"] button {
+    color: #aaa;
+    transition:
+        color 0.18s ease,
+        transform 0.12s ease;
+}
+
+button.wishlist-toggle:hover,
+form[action*="Wishlist"] button:hover {
+    transform: scale(1.05);
+    color: #e74c3c;
+}
+
+button.wishlist-toggle.favorited,
+form[action*="Wishlist"] button.favorited {
+    color: #e74c3c; /* красное сердечко */
+    text-shadow: 0 0 6px rgba(231, 76, 60, 0.12);
+}
+
+/* Favorites page */
+.favorites-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 18px;
+}
+
+.favorite-card {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 14px;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 6px 18px rgba(19, 24, 32, 0.04);
+    overflow: hidden;
+}
+
+.favorite-card .fav-left img {
+    width: 110px;
+    height: 110px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.favorite-card .fav-main {
+    flex: 1;
+}
+
+.fav-title {
+    margin: 0 0 6px 0;
+    font-size: 1.05rem;
+}
+.fav-price {
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #111;
+}
+.fav-desc {
+    color: #666;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+}
+.fav-actions .fav-remove {
+    background: transparent;
+    border: 1px solid #eee;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.fav-actions .fav-remove:hover {
+    background: #f9f9f941;
+}
+
+/* Empty message */
+.favorites-empty {
+    text-align: center;
+    padding: 36px;
+    color: #666;
+}
+
+/* Wishlist*/
+/* Обёртка */
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 28px 16px;
+}
+
+/* Заголовок страницы */
+.page-header {
+    text-align: left;
+    margin-bottom: 18px;
+}
+.page-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
+}
+.page-header .muted {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.95rem;
+}
+
+/* Секция избранного */
+.favorites-section {
+    margin-top: 12px;
+}
+
+/* Сетка карточек (один столбец на десктопе для простоты, можно менять) */
+.favorites-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+}
+
+/* Карточка избранного — прозрачная панель на фоне градиента */
+.favorite-card {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 14px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        opacity 0.18s ease;
+    color: #fff;
+}
+.favorite-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+/* Изображение */
+.fav-left img {
+    width: 110px;
+    height: 110px;
+    object-fit: cover;
+    border-radius: 8px;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    flex-shrink: 0;
+}
+
+/* Содержимое */
+.fav-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.fav-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+}
+.fav-price {
+    font-weight: 700;
+    color: #feca57;
+    font-size: 1rem;
+}
+.fav-desc {
+    font-size: 0.92rem;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* Действия */
+.fav-actions {
+    margin-top: 6px;
+    display: flex;
+    gap: 8px;
+}
+.fav-remove {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition:
+        background 0.16s ease,
+        transform 0.12s ease;
+}
+.fav-remove:hover {
+    background: rgba(255, 255, 255, 0.06);
+    transform: translateY(-2px);
+}
+
+/* Пустой список */
+.favorites-empty {
+    text-align: center;
+    padding: 36px;
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+/* Маленькие экраны */
+@media (max-width: 640px) {
+    .favorite-card {
+        flex-direction: row;
+        gap: 12px;
+        padding: 12px;
+    }
+    .fav-left img {
+        width: 88px;
+        height: 88px;
+    }
+    .page-header h1 {
+        font-size: 1.5rem;
+    }
+}
+
+/* Красное сердечко (класс для кнопок избранного в каталоге) */
+button.wishlist-toggle,
+form[action*="Wishlist"] button {
+    color: #fff;
+    transition:
+        color 0.18s ease,
+        transform 0.12s ease;
+}
+button.wishlist-toggle.favorited,
+form[action*="Wishlist"] button.favorited {
+    color: #ff4d4d;
+    filter: drop-shadow(0 3px 8px rgba(255, 77, 77, 0.18));
+}

@@ -118,6 +118,11 @@ namespace video_site.Controllers
             return Json(dto);
         }
 
+        public async Task<IActionResult> Wishlist()
+        {
+            return View();
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

@@ -1,0 +1,24 @@
+@{
+    ViewData["Title"] = "Избранное";
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/catalog.css" />
+    <script src="~/js/style/catalog.js" defer></script>
+    <title>Избранное - Deal Hub</title>
+</head>
+
+<body>
+    <div class="container" style="padding: 28px 12px;">
+        <div class="page-header">
+            <h1>Избранное</h1>
+            <p class="muted">Ваши сохранённые товары. Нельзя открыть товар из этой страницы — только просмотреть и удалить.</p>
+        </div>
+
+        <section class="favorites-section">
+            <div class="favorites-grid" aria-live="polite">
+                <!-- Карточки подгрузит catalog.js через /Catalog/GetProductJson -->
+            </div>
+        </section>
+    </div>
+</body>

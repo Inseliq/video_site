@@ -10,6 +10,6 @@ namespace video_site.Models
         public string Name { get; set; }
 
         [Required, StringLength(100)]
-        public string Slug { get; set; }
+        public string Slug { get; set; } //URL идентификатор категории
     }
 }
